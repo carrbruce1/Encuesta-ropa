@@ -3,110 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Panel Admin - Comentarios</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      background-color: white;
-      margin-bottom: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #4f46e5;
-      color: white;
-      font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    tr:hover {
-      background-color: #f1f1f1;
-      cursor: pointer;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .controls input, .controls select {
-      padding: 10px;
-      margin-right: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .controls button {
-      padding: 10px 15px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .controls button:hover {
-      background-color: #3b3f9e;
-    }
-    
-    .btn-delete {
-      background-color: #ef4444 !important;
-      margin-right: 5px;
-    }
-    
-    .btn-hide {
-      background-color: #f59e0b !important;
-    }
-    
-    .btn-highlight {
-      background-color: #10b981 !important;
-    }
-    
-    button {
-      transition: all 0.2s ease;
-    }
-    
-    button:hover {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-
-    @media (max-width: 600px) {
-      th, td {
-        padding: 10px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="icon" type="image/png" href="/img/favicon/favicon-32x32.png">
 </head>
-<link rel="icon" type="image/png" href="/img/favicon/favicon-32x32.png">
 <body>
   <h1>Comentarios recibidos</h1>
 
   <div class="controls">
-    <input type="text" id="search" placeholder="Buscar por contenido o autor" />
+    <input type="text" id="search" placeholder="Buscar por contenido" />
     <select id="star-filter">
       <option value="">Filtrar por estrellas</option>
       <option value="5">5 Estrellas</option>
@@ -115,7 +19,7 @@
       <option value="2">2 Estrellas</option>
       <option value="1">1 Estrella</option>
     </select>
-    <button onclick="filterComments()">Filtrar</button>
+    <button class="btn btn-primary" onclick="filterComments()">Filtrar</button>
   </div>
 
   <table>
@@ -130,59 +34,10 @@
       </tr>
     </thead>
     <tbody id="comentarios-body">
-      <tr>
-        <td>1</td>
-        <td>5</td>
-        <td>Ejemplo de comentario</td>
-        <td>2023-11-15</td>
-        <td>
-          <button onclick="deleteComment(1)" class="btn-delete">Eliminar</button>
-          <button onclick="hideComment(1)" class="btn-hide">Ocultar</button>
-        </td>
-        <td>
-          <button onclick="highlightComment(1)" class="btn-highlight">Destacar</button>
-          <span class="is-featured" style="display:none">⭐</span>
-        </td>
-      </tr>
-      <!-- Aquí se agregarán más comentarios dinámicamente -->
+      <!-- Comentarios se insertan por JS -->
     </tbody>
   </table>
 
   <script src="/js/admin.js"></script>
-  <script>
-    // Función para filtrar comentarios
-    function filterComments() {
-      const searchValue = document.getElementById('search').value.toLowerCase();
-      const starValue = document.getElementById('star-filter').value;
-      const comentariosBody = document.getElementById('comentarios-body');
-      const rows = comentariosBody.getElementsByTagName('tr');
-
-      for (let i = 0; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName('td');
-        const commentText = cells[2].textContent.toLowerCase();
-        const stars = cells[1].textContent;
-
-        const matchesSearch = commentText.includes(searchValue);
-        const matchesStars = starValue ? stars === starValue : true;
-
-        if (matchesSearch && matchesStars) {
-          rows[i].style.display = '';
-        } else {
-          rows[i].style.display = 'none';
-        }
-      }
-    }
-
-    // Función para eliminar o ocultar comentarios
-    function deleteComment(id) {
-      // Lógica para eliminar o ocultar el comentario
-      // Esto puede ser una llamada a la API o manipulación del DOM
-    }
-
-    // Función para fijar comentarios destacados
-    function highlightComment(id) {
-      // Lógica para marcar el comentario como destacado
-    }
-  </script>
 </body>
 </html>
