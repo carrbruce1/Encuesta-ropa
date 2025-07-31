@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Valora tu Experiencia</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -34,7 +34,6 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden rating-box p-8 mb-10">
             <div class="text-center">
                 <div class="flex justify-center space-x-2 mb-8" id="stars-container">
-                    <!-- Stars will be added dynamically via JS later -->
                     <div class="star text-4xl text-gray-300 hover:text-yellow-400 cursor-pointer" data-rating="1">★</div>
                     <div class="star text-4xl text-gray-300 hover:text-yellow-400 cursor-pointer" data-rating="2">★</div>
                     <div class="star text-4xl text-gray-300 hover:text-yellow-400 cursor-pointer" data-rating="3">★</div>
@@ -63,9 +62,8 @@
                         Compartir en Google Maps
                     </button>
                     
-                    <!-- Google Maps logo preview -->
                     <div class="flex items-center">
-                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2930f768-0491-424f-81ad-59f3bafbf17b.png" alt="Logo de Google Maps con fondo blanco y detalles en rojo, azul y verde" class="h-8 mr-2">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2930f768-0491-424f-81ad-59f3bafbf17b.png" alt="Logo de Google Maps con fondo blanco y detalles en rojo, azul y verde" class="h-8 mr-2" />
                         <span class="text-gray-600">Se abrirá en una nueva pestaña</span>
                     </div>
                 </div>
@@ -86,7 +84,7 @@
         <div class="bg-white rounded-xl shadow-md overflow-hidden p-8">
             <div class="flex flex-col md:flex-row items-center">
                 <div class="md:w-1/4 mb-6 md:mb-0 flex justify-center">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/07549bf0-6b35-4022-a250-dafb41a0a6d6.png" alt="Logotipo del negocio con diseño moderno y colores corporativos" class="rounded-lg">
+                    <img src="img/h&z.jpg" alt="Logotipo del negocio con diseño moderno y colores corporativos" class="rounded-lg" />
                 </div>
                 <div class="md:w-3/4 md:pl-8">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">H&Z indumentaria</h2>
@@ -119,11 +117,19 @@
             <!-- Google Maps Preview -->
             <div class="mt-8">
                 <div class="flex items-center mb-4">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f4b2ea6b-5ade-4641-a9bc-2d3c2bd38414.png" alt="Miniatura del ícono de ubicación de Google Maps en rojo" class="h-6 mr-2">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f4b2ea6b-5ade-4641-a9bc-2d3c2bd38414.png" alt="Miniatura del ícono de ubicación de Google Maps en rojo" class="h-6 mr-2" />
                     <h3 class="text-xl font-semibold text-gray-800">Ubicación en Google Maps</h3>
                 </div>
-                <div class="bg-gray-200 rounded-lg overflow-hidden h-48 flex items-center justify-center">
-                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/6406bc42-25df-4482-a837-aeaf4aa6ee93.png" alt="Vista previa del mapa mostrando la ubicación del negocio con un marcador rojo en el centro" class="w-full h-full object-cover">
+                <div class="rounded-lg overflow-hidden">
+                    <iframe
+                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3353.199928785919!2d-58.0209471!3d-31.395724!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ade9005f84d9cb%3A0x34badc5cce1397d7!2sSan%20Martin%2020%2C%20Argentina!5e0!3m2!1ses!2sus!4v1690891111111!5m2!1ses!2sus"
+                      width="100%"
+                      height="300"
+                      style="border:0;"
+                      allowfullscreen=""
+                      loading="lazy"
+                      referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
                 </div>
             </div>
         </div>
@@ -133,4 +139,3 @@
     <script src="js/inicio.js"></script>
 </body>
 </html>
-
