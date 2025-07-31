@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS encuestas_db;
+USE encuestas_db;
+
+CREATE TABLE IF NOT EXISTS comentarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  estrellas INT NOT NULL CHECK (estrellas BETWEEN 1 AND 5),
+  comentario TEXT,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
