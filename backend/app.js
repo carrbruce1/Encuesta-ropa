@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = process.env.PORT || 3030;
+const PORT = process.env.PORT || 3306;
 
 app.use(cors());
 app.use(express.json());
@@ -32,5 +32,5 @@ app.get("/admin", (req,res) => {
 app.use('/api/feedback', feedbackRoutes);
 
 app.listen(port, () => {
-  console.log(`Servidor escuchando en http://localhost:${port}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
