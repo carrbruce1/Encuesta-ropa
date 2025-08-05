@@ -1,15 +1,11 @@
 {
   "name": "hugo-pagina",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "backend/app.js",
   "type": "module",
   "scripts": {
     "start": "node backend/app.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
