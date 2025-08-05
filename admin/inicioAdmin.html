@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Salame Manager</title>
+    <style>
+        :root {
+            --primary-color: #8B4513; /* Brown */
+            --secondary-color: #A0522D; /* Sienna */
+            --accent-color: #D2691E; /* Chocolate */
+            --light-color: #F5DEB3; /* Wheat */
+            --dark-color: #5D4037; /* Dark brown */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: rgba(245, 222, 179, 0.9);
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        
+        .forgot-password a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #d32f2f;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .show-error {
+            opacity: 1;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 0 1rem;
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Animation effects */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-container {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .form-group {
+            animation: fadeIn 0.5s ease-out 0.2s forwards;
+        }
+        
+        button {
+            animation: fadeIn 0.5s ease-out 0.4s forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="/img/h&z.jpg" alt="Logo de H&Z Indumentaria">
+        </div>
+        
+        <h1>Acceso Administrativo</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+                <!-- <div class="forgot-password">
+                    <a href="#">¿Olvidó su contraseña?</a>
+                </div> -->
+            </div>
+            
+            <button type="submit" src="/admin/admin.html">Iniciar Sesión</button>
+            
+            <div class="error-message" id="errorMessage"></div>
+        </form>
+        
+        <div class="footer">
+            &copy; Sistema de Administración H&Z Indumentaria
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Simple validation (in a real app, this would be server-side)
+            if (username === 'admin' && password === 'salame123') {
+                // Successful login
+                errorMessage.textContent = '';
+                errorMessage.classList.remove('show-error');
+                
+                // In a real app, you would redirect or perform authentication here
+                alert('Inicio de sesión exitoso. Redirigiendo al panel...');
+                // window.location.href = 'panel.html';
+                
+                // Simulate loading
+                const buttons = document.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    btn.innerHTML = '<span class="spinner"></span> Autenticando...';
+                    btn.disabled = true;
+                });
+                
+                setTimeout(() => {
+                    // Redirect would happen here
+                }, 1500);
+            } else {
+                // Failed login
+                errorMessage.textContent = 'Usuario o contraseña incorrectos';
+                errorMessage.classList.add('show-error');
+            }
+        });
+        
+        // Add input focus effects
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.querySelector('label').style.color = 'var(--accent-color)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.querySelector('label').style.color = 'var(--dark-color)';
+            });
+        });
+    </script>
+</body>
+</html>

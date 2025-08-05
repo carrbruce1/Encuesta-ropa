@@ -7,36 +7,41 @@
   <link rel="icon" type="image/png" href="/img/favicon/favicon-32x32.png">
 </head>
 <body>
-  <h1>Comentarios recibidos</h1>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Filtros</h2>
+      <input type="text" id="search" placeholder="Buscar por contenido" />
+      <select id="star-filter">
+        <option value="">Filtrar por estrellas</option>
+        <option value="5">5 Estrellas</option>
+        <option value="4">4 Estrellas</option>
+        <option value="3">3 Estrellas</option>
+        <option value="2">2 Estrellas</option>
+        <option value="1">1 Estrella</option>
+      </select>
+      <button class="btn" onclick="filterComments()">Filtrar</button>
+    </aside>
 
-  <div class="controls">
-    <input type="text" id="search" placeholder="Buscar por contenido" />
-    <select id="star-filter">
-      <option value="">Filtrar por estrellas</option>
-      <option value="5">5 Estrellas</option>
-      <option value="4">4 Estrellas</option>
-      <option value="3">3 Estrellas</option>
-      <option value="2">2 Estrellas</option>
-      <option value="1">1 Estrella</option>
-    </select>
-    <button class="btn btn-primary" onclick="filterComments()">Filtrar</button>
+    <main class="main-content">
+      <h1>Comentarios recibidos</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Estrellas</th>
+            <th>Comentario</th>
+            <th>Email</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+            <th>Destacado</th>
+          </tr>
+        </thead>
+        <tbody id="comentarios-body">
+          <!-- Comentarios se insertan por JS -->
+        </tbody>
+      </table>
+    </main>
   </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Estrellas</th>
-        <th>Comentario</th>
-        <th>Fecha</th>
-        <th>Acciones</th>
-        <th>Destacado</th>
-      </tr>
-    </thead>
-    <tbody id="comentarios-body">
-      <!-- Comentarios se insertan por JS -->
-    </tbody>
-  </table>
 
   <script src="/js/admin.js"></script>
 </body>

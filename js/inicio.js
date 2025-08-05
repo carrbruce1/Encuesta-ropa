@@ -8,110 +8,127 @@ document.addEventListener('DOMContentLoaded', () => {
   const lowRatingSection = document.getElementById('low-rating-message');
 
   const submitBtn = document.getElementById('submit-btn');
-  const improvementBtn = lowRatingSection.querySelector('button');
+  const improvementBtn = lowRatingSection ? lowRatingSection.querySelector('button') : null;
 
   function resetForm() {
-    // Reset estrellas
     selectedRating = 0;
     stars.forEach((s) => {
       s.classList.remove('text-yellow-400');
       s.classList.add('text-gray-300');
     });
 
-    // Reset texto y barra
-    ratingText.innerText = '';
-    ratingBar.style.width = '0';
+    ratingText.innerText = 'Selecciona tu calificación';
+    ratingBar.style.width = '0%';
     ratingBar.classList.add('hidden');
 
-    // Ocultar secciones
     commentSection.classList.add('hidden');
-    lowRatingSection.classList.add('hidden');
+    if (lowRatingSection) lowRatingSection.classList.add('hidden');
 
-    // Limpiar inputs
-    document.getElementById('comment').value = '';
-    document.getElementById('improvement-comment').value = '';
+    const commentEl = document.getElementById('comment');
+    if (commentEl) commentEl.value = '';
+
+    const improvementEl = document.getElementById('improvement-comment');
+    if (improvementEl) improvementEl.value = '';
+
+    const emailEl = document.getElementById('email');
+    if (emailEl) emailEl.value = '';
   }
 
   stars.forEach((star, index) => {
     star.addEventListener('click', () => {
       selectedRating = index + 1;
 
-      // Visually fill in stars
       stars.forEach((s, i) => {
         s.classList.toggle('text-yellow-400', i < selectedRating);
         s.classList.toggle('text-gray-300', i >= selectedRating);
       });
 
-      // Rating bar + text
-      ratingText.innerText = `Tu calificación: ${selectedRating} estrella${selectedRating > 1 ? 's' : ''}`;
+      ratingText.innerText = `Tu calificación: ${selectedRating}/5`;
       ratingBar.style.width = `${selectedRating * 20}%`;
       ratingBar.classList.remove('hidden');
 
-      // Mostrar secciones según estrellas
       if (selectedRating >= 4) {
-        commentSection.classList.remove('hidden');
-        lowRatingSection.classList.add('hidden');
+        if (commentSection) commentSection.classList.remove('hidden');
+        if (lowRatingSection) lowRatingSection.classList.add('hidden');
       } else {
-        commentSection.classList.add('hidden');
-        lowRatingSection.classList.remove('hidden');
+        if (commentSection) commentSection.classList.add('hidden');
+        if (lowRatingSection) lowRatingSection.classList.remove('hidden');
       }
     });
   });
 
-  // Enviar comentario positivo
-  if (submitBtn) {
-    submitBtn.addEventListener('click', async () => {
-      const comment = document.getElementById('comment').value.trim();
+  // Función común para enviar feedback
+  async function enviarFeedback(payload) {
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      try {
-        const res = await fetch('/api/feedback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            estrellas: selectedRating,
-            comentario: comment,
-          }),
-        });
+      const data = await res.json().catch(() => ({}));
 
-        const data = await res.json();
-
-        alert('¡Gracias por tu comentario!');
-        resetForm(); // ✅ Limpiar todo
-
-        if (res.ok && data.redirect) {
-          window.open(data.redirect, '_blank');
-        }
-
-      } catch (err) {
-        alert('Ocurrió un error al enviar tu comentario.');
+      if (!res.ok) {
+        alert(data.message || 'Ocurrió un error al enviar tu comentario.');
+        return { ok: false, data };
       }
-    });
+
+      return { ok: true, data };
+    } catch (err) {
+      console.error(err);
+      alert('Ocurrió un error al enviar tu comentario.');
+      return { ok: false, data: null };
+    }
   }
 
-  // Enviar comentario negativo
-  if (improvementBtn) {
-    improvementBtn.addEventListener('click', async () => {
-      const comment = document.getElementById('improvement-comment').value.trim();
+// Enviar comentario positivo
+if (submitBtn) {
+  submitBtn.addEventListener('click', async () => {
+    const comment = document.getElementById('comment')?.value.trim() || '';
+    const email = document.getElementById('email')?.value.trim() || '';
 
-      try {
-        const res = await fetch('/api/feedback', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            estrellas: selectedRating,
-            comentario: comment,
-          }),
-        });
+    if (!selectedRating) {
+      alert('Por favor seleccioná una calificación.');
+      return;
+    }
 
-        if (res.ok) {
-          alert('Gracias por ayudarnos a mejorar.');
-          resetForm(); // ✅ Limpiar también
-        } else {
-          alert('Hubo un problema al guardar tu comentario.');
-        }
-      } catch (err) {
-        alert('Error al enviar comentario.');
-      }
+    const { ok, data } = await enviarFeedback({
+      estrellas: selectedRating,
+      comentario: comment,
+      email: email
     });
-  }
+
+    if (ok) {
+      alert('¡Gracias por tu comentario!');
+      resetForm();
+      if (data && data.redirect) window.open(data.redirect, '_blank');
+    }
+  });
+}
+
+// Enviar comentario negativo
+if (improvementBtn) {
+  improvementBtn.addEventListener('click', async () => {
+    const comment = document.getElementById('improvement-comment')?.value.trim() || '';
+    const email = document.getElementById('email-low')?.value.trim() || '';
+
+    if (!selectedRating) {
+      alert('Por favor seleccioná una calificación.');
+      return;
+    }
+
+    const { ok } = await enviarFeedback({
+      estrellas: selectedRating,
+      comentario: comment,
+      email: email
+    });
+
+    if (ok) {
+      alert('Gracias por ayudarnos a mejorar.');
+      resetForm();
+    }
+  });
+}
+
+
 });

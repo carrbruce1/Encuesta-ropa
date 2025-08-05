@@ -13,14 +13,46 @@ async function cargarComentarios() {
         <td>${c.id}</td>
         <td>${c.estrellas}</td>
         <td>${c.comentario || '-'}</td>
+        <td>${c.email || '-'}</td> 
         <td>${new Date(c.creado_en).toLocaleString()}</td>
         <td>
-          <button class="btn btn-danger" onclick="deleteComment(${c.id})">Eliminar</button>
+          <button 
+            onclick="deleteComment(${c.id})"
+            style="background:linear-gradient(135deg,#ff4b5c,#ff1e40);
+                  color:white;
+                  font-weight:bold;
+                  border:none;
+                  border-radius:8px;
+                  padding:8px 14px;
+                  font-size:14px;
+                  cursor:pointer;
+                  box-shadow:0 3px 8px rgba(255,0,55,0.3);
+                  transition:all 0.25s ease-in-out"
+            onmouseover="this.style.background='linear-gradient(135deg,#e60026,#c4001e)';this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 12px rgba(255,0,55,0.4)';"
+            onmouseout="this.style.background='linear-gradient(135deg,#ff4b5c,#ff1e40)';this.style.transform='scale(1)';this.style.boxShadow='0 3px 8px rgba(255,0,55,0.3)';"
+        >
+            🗑 Eliminar
+        </button>
+
         </td>
         <td>
-          <button class="btn btn-primary" onclick="highlightComment(${c.id}, this)">
+          <button 
+            onclick="highlightComment(${c.id}, this)"
+            style="background:linear-gradient(135deg,#4cafef,#2c88d9);
+                  color:white;
+                  font-weight:bold;
+                  border:none;
+                  border-radius:8px;
+                  padding:8px 14px;
+                  font-size:14px;
+                  cursor:pointer;
+                  box-shadow:0 3px 8px rgba(0,140,255,0.3);
+                  transition:all 0.25s ease-in-out"
+            onmouseover="this.style.background='linear-gradient(135deg,#2c88d9,#1a6fb5)';this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 12px rgba(0,140,255,0.4)';"
+            onmouseout="this.style.background='linear-gradient(135deg,#4cafef,#2c88d9)';this.style.transform='scale(1)';this.style.boxShadow='0 3px 8px rgba(0,140,255,0.3)';"
+        >
             ${c.destacado ? 'Quitar ⭐' : 'Destacar'}
-          </button>
+        </button>
         </td>
       `;
 
