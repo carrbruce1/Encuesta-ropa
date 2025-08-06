@@ -1,13 +1,10 @@
 import express from 'express';
-import { guardarFeedback } from '../controllers/feedback.controller.js';
+import { guardarFeedback, obtenerComentarios } from '../controllers/feedback.controller.js';
 
 const router = express.Router();
 
+// Guardar feedback
 router.post('/', guardarFeedback);
-
-// export default router;
-
-
 router.post('/feedback', guardarFeedback);
 
 // Obtener todos los comentarios
