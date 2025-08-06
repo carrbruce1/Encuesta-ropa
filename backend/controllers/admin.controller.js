@@ -50,38 +50,46 @@
 
 import pool from '../db/db-connection.js';
 
+// Listar comentarios
 export const listarComentarios = async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM comentarios ORDER BY creado_en DESC');
     res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener' });
+  } catch (error) {
+    console.error('Error listarComentarios:', error);
+    res.status(500).json({ message: 'Error al obtener comentarios' });
   }
 };
 
+// Eliminar comentario por id
 export const eliminarComentario = async (req, res) => {
+  const { id } = req.params;
   try {
-    const id = req.params.id;
-    await pool.query('DELETE FROM comentarios WHERE id = ?', [id]);
-    res.json({ ok: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al eliminar' });
+    const [result] = await pool.query('DELETE FROM comentarios WHERE id = ?', [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Comentario no encontrado' });
+    }
+    res.json({ ok: true, message: 'Comentario eliminado' });
+  } catch (error) {
+    console.error('Error eliminarComentario:', error);
+    res.status(500).json({ message: 'Error al eliminar comentario' });
   }
 };
 
+// Alternar / setear destacado
 export const toggleDestacado = async (req, res) => {
+  const { id } = req.params;
   try {
-    const id = req.params.id;
-    // obtener estado actual
+    // obtenemos estado actual
     const [rows] = await pool.query('SELECT destacado FROM comentarios WHERE id = ?', [id]);
-    if (!rows.length) return res.status(404).json({ error: 'No encontrado' });
+    if (!rows.length) {
+      return res.status(404).json({ message: 'Comentario no encontrado' });
+    }
     const nuevo = rows[0].destacado ? 0 : 1;
     await pool.query('UPDATE comentarios SET destacado = ? WHERE id = ?', [nuevo, id]);
-    res.json({ destacado: !!nuevo });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al actualizar' });
+    res.json({ ok: true, destacado: Boolean(nuevo) });
+  } catch (error) {
+    console.error('Error toggleDestacado:', error);
+    res.status(500).json({ message: 'Error al actualizar destacado' });
   }
 };
