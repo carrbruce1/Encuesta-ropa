@@ -126,3 +126,29 @@ function filterComments() {
 }
 
 document.addEventListener('DOMContentLoaded', cargarComentarios);
+
+async function cargarComentarios() {
+  try {
+    const res = await fetch('/api/comentarios');
+    const comentarios = await res.json();
+
+    const tabla = document.getElementById('tabla-comentarios');
+    tabla.innerHTML = '';
+
+    comentarios.forEach(c => {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${c.id}</td>
+        <td>${c.estrellas}</td>
+        <td>${c.comentario}</td>
+        <td>${c.email}</td>
+        <td>${new Date(c.creado_en).toLocaleString()}</td>
+      `;
+      tabla.appendChild(fila);
+    });
+  } catch (error) {
+    console.error('Error cargando comentarios:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', cargarComentarios);

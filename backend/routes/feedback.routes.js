@@ -5,5 +5,12 @@ const router = express.Router();
 
 router.post('/', guardarFeedback);
 
-export default router;
+// export default router;
 
+
+router.post('/feedback', guardarFeedback);
+
+// Obtener todos los comentarios
+router.get('/comentarios', obtenerComentarios);
+
+export default router;

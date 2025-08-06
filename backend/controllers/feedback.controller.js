@@ -38,3 +38,13 @@ export const guardarFeedback = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
+
+export const obtenerComentarios = async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM comentarios ORDER BY creado_en DESC');
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener comentarios:', error);
+    res.status(500).json({ error: 'Error al obtener comentarios' });
+  }
+};
