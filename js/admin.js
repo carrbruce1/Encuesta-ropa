@@ -184,9 +184,25 @@ async function cargarComentarios() {
         <td>${c.estrellas}</td>
         <td style="white-space:pre-wrap;">${escapeHtml(c.comentario || '-')}</td>
         <td>${escapeHtml(c.email || '-')}</td>
-        <td>${formatFecha(c.creado_en)}</td>
         <td>
-          <button class="btn btn-danger" onclick="deleteComment(${c.id})">Eliminar</button>
+         <button 
+  onclick="deleteComment(${c.id})"
+  style="
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  "
+  onmouseover="this.style.backgroundColor='#b02a37'"
+  onmouseout="this.style.backgroundColor='#dc3545'"
+>
+  Eliminar
+</button>
+
         </td>
       `;
       tbody.appendChild(tr);
