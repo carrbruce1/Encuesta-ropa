@@ -144,51 +144,9 @@
 // admin.js - versión robusta
 // Recomendación: guardar en /js/admin.js (mismo path que admin.html usa)
 
-const API_BASE = '/api/admin'; // ruta base para las requests
+// /js/admin.js - versión sin destacado
+const API_BASE = '/api/admin';
 
-// debounce simple
-function debounce(fn, wait = 250) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), wait);
-  };
-}
-
-// Mensajes temporales (toast simple)
-function showToast(msg, type = 'info', timeout = 2500) {
-  let box = document.getElementById('__toast_box');
-  if (!box) {
-    box = document.createElement('div');
-    box.id = '__toast_box';
-    box.style.position = 'fixed';
-    box.style.right = '20px';
-    box.style.bottom = '20px';
-    box.style.zIndex = 9999;
-    document.body.appendChild(box);
-  }
-  const el = document.createElement('div');
-  el.textContent = msg;
-  el.style.padding = '10px 14px';
-  el.style.marginTop = '8px';
-  el.style.borderRadius = '8px';
-  el.style.boxShadow = '0 6px 18px rgba(0,0,0,0.08)';
-  el.style.color = '#fff';
-  el.style.fontWeight = '600';
-  el.style.minWidth = '140px';
-  if (type === 'error') el.style.background = '#ef4444';
-  else if (type === 'success') el.style.background = '#10b981';
-  else el.style.background = '#374151';
-  box.appendChild(el);
-  setTimeout(() => {
-    el.style.transition = 'all .25s ease';
-    el.style.opacity = 0;
-    el.style.transform = 'translateX(20px)';
-    setTimeout(() => el.remove(), 300);
-  }, timeout);
-}
-
-// Escapa HTML básico
 function escapeHtml(str = '') {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -198,165 +156,79 @@ function escapeHtml(str = '') {
     .replace(/'/g, '&#39;');
 }
 
-// Devuelve string fecha legible, soporta distintos nombres de campo
-function formatFecha(row) {
-  const raw = row.creado_en ?? row.creado_at ?? row.created_at ?? row.creado ?? null;
+function formatFecha(raw) {
   if (!raw) return '-';
-  // si viene ya como string ISO o timestamp
-  try {
-    const d = new Date(raw);
-    if (isNaN(d)) return String(raw);
-    return d.toLocaleString();
-  } catch {
-    return String(raw);
-  }
+  const d = new Date(raw);
+  if (isNaN(d)) return String(raw);
+  return d.toLocaleString(); // podés ajustar locale/format aquí
 }
 
-let comentariosCache = []; // cache para filtrar sin volver a pedir al backend
-
-// Carga y pinta la tabla
 async function cargarComentarios() {
   try {
-    const res = await fetch(`${API_BASE}/comentarios`, { headers: { Accept: 'application/json' } });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '');
-      throw new Error(`Error ${res.status} ${res.statusText} ${txt}`);
-    }
-    const datos = await res.json();
-    if (!Array.isArray(datos)) {
-      throw new Error('Respuesta inválida del servidor');
-    }
-    comentariosCache = datos;
-    pintarComentarios(datos);
-  } catch (err) {
-    console.error('Error cargarComentarios:', err);
-    showToast('Error al cargar comentarios (revisá logs).', 'error', 4000);
+    const res = await fetch(`${API_BASE}/comentarios`);
+    if (!res.ok) throw new Error('Error cargando comentarios');
+    const comentarios = await res.json();
+
     const tbody = document.getElementById('comentarios-body');
-    if (tbody) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:18px;color:#c00">No se pudieron cargar los comentarios</td></tr>`;
+    tbody.innerHTML = '';
+
+    if (!comentarios.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:18px;color:#666">No hay comentarios.</td></tr>`;
+      return;
     }
+
+    comentarios.forEach(c => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${c.id}</td>
+        <td>${c.estrellas}</td>
+        <td style="white-space:pre-wrap;">${escapeHtml(c.comentario || '-')}</td>
+        <td>${escapeHtml(c.email || '-')}</td>
+        <td>${formatFecha(c.creado_en)}</td>
+        <td>
+          <button class="btn btn-danger" onclick="deleteComment(${c.id})">Eliminar</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
+    document.getElementById('comentarios-body').innerHTML =
+      `<tr><td colspan="6" style="text-align:center;padding:18px;color:#c00">Error al cargar comentarios</td></tr>`;
   }
 }
 
-// Pinta filas en base pasada (array)
-function pintarComentarios(lista) {
-  const tbody = document.getElementById('comentarios-body');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  if (!lista.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:18px;color:#666">No hay comentarios.</td></tr>`;
-    return;
-  }
-
-  lista.forEach(c => {
-    const fecha = formatFecha(c);
-    const comentarioText = c.comentario ? escapeHtml(c.comentario) : '-';
-    const emailText = c.email ? escapeHtml(c.email) : '-';
-    const destacado = c.destacado ? true : false;
-
-    const tr = document.createElement('tr');
-    if (destacado) tr.style.backgroundColor = '#fff7d6';
-
-    tr.innerHTML = `
-      <td style="width:60px; font-weight:600;">${c.id}</td>
-      <td style="width:90px;">${c.estrellas}</td>
-      <td style="max-width:480px; white-space:pre-wrap;">${comentarioText}</td>
-      <td style="width:200px">${emailText}</td>
-      <td style="width:180px">${fecha}</td>
-      <td style="width:200px; display:flex; gap:8px;">
-        <button class="btn btn-danger" data-id="${c.id}" aria-label="Eliminar">Eliminar</button>
-        <button class="btn btn-primary" data-id="${c.id}" data-dest="${destacado ? 1 : 0}" aria-label="Destacar">
-          ${destacado ? 'Quitar ⭐' : 'Destacar'}
-        </button>
-      </td>
-    `;
-
-    // Delego eventos a los botones para evitar problemas con innerHTML en cada render
-    tbody.appendChild(tr);
-  });
-
-  // Asignar listeners a botones (después de pintar)
-  tbody.querySelectorAll('button.btn-danger').forEach(btn => {
-    btn.removeEventListener('click', onClickEliminar);
-    btn.addEventListener('click', onClickEliminar);
-  });
-  tbody.querySelectorAll('button.btn-primary').forEach(btn => {
-    btn.removeEventListener('click', onClickDestacar);
-    btn.addEventListener('click', onClickDestacar);
-  });
-}
-
-// Handler eliminar
-async function onClickEliminar(e) {
-  const id = e.currentTarget.dataset.id;
-  if (!id) return;
-  if (!confirm('¿Seguro querés eliminar este comentario?')) return;
+async function deleteComment(id) {
+  if (!confirm('¿Eliminar este comentario?')) return;
   try {
     const res = await fetch(`${API_BASE}/comentarios/${id}`, { method: 'DELETE' });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '');
-      throw new Error(`Error al eliminar: ${res.status} ${txt}`);
-    }
-    showToast('Comentario eliminado', 'success', 1600);
+    if (!res.ok) throw new Error('No se eliminó');
     await cargarComentarios();
   } catch (err) {
-    console.error('Eliminar error:', err);
-    showToast('Error al eliminar', 'error', 3000);
+    console.error(err);
+    alert('Error al eliminar el comentario.');
   }
 }
 
-// Handler destacar (toggle)
-async function onClickDestacar(e) {
-  const btn = e.currentTarget;
-  const id = btn.dataset.id;
-  if (!id) return;
-  try {
-    btn.disabled = true;
-    const res = await fetch(`${API_BASE}/comentarios/${id}/destacar`, { method: 'PATCH' });
-    if (!res.ok) {
-      const txt = await res.text().catch(() => '');
-      throw new Error(`Error destacar: ${res.status} ${txt}`);
-    }
-    const json = await res.json().catch(() => ({}));
-    const isDest = json.destacado === true || json.destacado === 1;
-    showToast(isDest ? 'Comentario destacado' : 'Se quitó destacado', 'success', 1400);
-    await cargarComentarios();
-  } catch (err) {
-    console.error('Destacar error:', err);
-    showToast('Error al destacar', 'error', 3000);
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-// Filtrado cliente (buscador + estrellas)
+// Filtros: buscador y filtro por estrellas (cliente)
 function aplicarFiltros() {
-  const q = (document.getElementById('search')?.value || '').trim().toLowerCase();
+  const q = (document.getElementById('search')?.value || '').toLowerCase().trim();
   const star = (document.getElementById('star-filter')?.value || '').trim();
+  const rows = Array.from(document.getElementById('comentarios-body').rows);
 
-  const filtrado = comentariosCache.filter(c => {
-    const texto = ((c.comentario || '') + ' ' + (c.email || '')).toLowerCase();
+  rows.forEach(row => {
+    const texto = (row.cells[2].textContent + ' ' + row.cells[3].textContent).toLowerCase();
+    const estrellas = row.cells[1].textContent.trim();
     const matchText = !q || texto.includes(q);
-    const matchStar = !star || String(c.estrellas) === String(star);
-    return matchText && matchStar;
+    const matchStar = !star || estrellas === star;
+    row.style.display = (matchText && matchStar) ? '' : 'none';
   });
-
-  pintarComentarios(filtrado);
-}
-
-// Bind de filtros con debounce
-function setupFiltros() {
-  const search = document.getElementById('search');
-  const star = document.getElementById('star-filter');
-  if (search) search.addEventListener('input', debounce(aplicarFiltros, 200));
-  if (star) star.addEventListener('change', aplicarFiltros);
-  // también opción de botón "Filtrar" si existe
-  const filterBtn = document.querySelector('.controls button');
-  if (filterBtn) filterBtn.addEventListener('click', aplicarFiltros);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupFiltros();
   cargarComentarios();
+  const search = document.getElementById('search');
+  const star = document.getElementById('star-filter');
+  if (search) search.addEventListener('input', aplicarFiltros);
+  if (star) star.addEventListener('change', aplicarFiltros);
 });
